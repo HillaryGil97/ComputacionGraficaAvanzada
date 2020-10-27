@@ -105,6 +105,7 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 //		"../Textures/mp_bloodvalley/blood-valley_rt.tga", //right
 //		"../Textures/mp_bloodvalley/blood-valley_lf.tga" }; //left
 
+//--------------------------------------------------------------Cargando Nuevo Skybox
 std::string fileNames[6] = { "../Textures/nuevo/posx.tga",
 		"../Textures/nuevo/negx.tga",
 		"../Textures/nuevo/posy.tga",
@@ -130,7 +131,7 @@ glm::mat4 modelMatrixPacmanCorriendo = glm::mat4(1.0f);
 
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 int modelSelected = 0;
-int banderaPacman = 0;
+int banderaPacman = 0;//------------------------------------------->Para indicar el estado de PacMan
 bool enableCountSelected = true;
 
 // Variables to animations keyframes
@@ -1047,7 +1048,7 @@ void applicationLoop() {
 		mayowModelAnimate.setAnimationIndex(0);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 
-		//------------------------------------------------------>renderizando Pacman en Descanso
+		//------------------------------------------------------>renderizando de Pacman según el estado de banderaPacman
 
 		if (banderaPacman == 1) {
 			glm::mat4 modelMatrixPacmanCorriendoBody = glm::mat4(modelMatrixPacmanCorriendo);
