@@ -709,13 +709,13 @@ bool processInput(bool continueApplication) {
 		banderaPacman = 1;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, -0.02));
-		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, -0.02));
+		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, -0.04));
+		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, -0.04));
 		banderaPacman = 1;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, 0.02));
-		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, 0.02));
+		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, 0.04));
+		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, 0.04));
 		banderaPacman = 1;
 	}
 
@@ -926,17 +926,24 @@ void applicationLoop() {
 
 		if (banderaPacman == 1) {
 			modelMatrixPacmanCorriendo[3][1] = terrain.getHeightTerrain(modelMatrixPacmanCorriendo[3][0], modelMatrixPacmanCorriendo[3][2]);
+			glm::vec3 aux = glm::vec3(terrain.getNormalTerrain(modelMatrixPacmanCorriendo[3][0], modelMatrixPacmanCorriendo[3][2]));
+			modelMatrixPacmanCorriendo[1][0] = aux[0];
+			modelMatrixPacmanCorriendo[1][1] = aux[1];
+			modelMatrixPacmanCorriendo[1][2] = aux[2];
 			glm::mat4 modelMatrixPacmanCorriendoBody = glm::mat4(modelMatrixPacmanCorriendo);
 			modelMatrixPacmanCorriendoBody = glm::scale(modelMatrixPacmanCorriendoBody, glm::vec3(0.005, 0.005, 0.005));
 			modelPacManCorriendo.render(modelMatrixPacmanCorriendoBody);
 		}
 		else {
 			modelMatrixPacmanDescanso[3][1] = terrain.getHeightTerrain(modelMatrixPacmanDescanso[3][0], modelMatrixPacmanDescanso[3][2]);
+			glm::vec3 aux = glm::vec3(terrain.getNormalTerrain(modelMatrixPacmanDescanso[3][0], modelMatrixPacmanDescanso[3][2]));
+			modelMatrixPacmanDescanso[1][0] = aux[0];
+			modelMatrixPacmanDescanso[1][1] = aux[1];
+			modelMatrixPacmanDescanso[1][2] = aux[2];
 			glm::mat4 modelMatrixPacmanDescansoBody = glm::mat4(modelMatrixPacmanDescanso);
 			modelMatrixPacmanDescansoBody = glm::scale(modelMatrixPacmanDescansoBody, glm::vec3(0.005, 0.005, 0.005));
 			modelPacManDescanso.render(modelMatrixPacmanDescansoBody);
 		}
-
 
 		/*******************************************
 		 * Skybox
