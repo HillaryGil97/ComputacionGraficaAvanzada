@@ -87,7 +87,9 @@ Model modelPacManCorriendo;
 
 // Terrain model instance
 //recibe como parametros (xTablero,yTablero,numero de subdiviciones,altura máxima del terreno,dirección del mapa)
-Terrain terrain(-1, -1, 200, 40, "../Textures/MiMapaDeAlturas.png"); //--------------------------------> SEcarga el mapa de alturas del terreno
+
+//--------------------------------> Se carga el mapa de alturas del terreno
+Terrain terrain(-1, -1, 200, 30, "../Textures/MiMapaDeAlturas.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint skyboxTextureID;
@@ -606,7 +608,7 @@ bool processInput(bool continueApplication) {
 	if (enableCountSelected && glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
 		enableCountSelected = false;
 		modelSelected++;
-		if (modelSelected > 3)//--------------------------------------------------->Para poder seleccionar el modelo del vaquero
+		if (modelSelected > 2)
 			modelSelected = 0;
 		if (modelSelected == 1)
 			fileName = "../animaciones/animation_dart_joints.txt";
@@ -808,9 +810,11 @@ void applicationLoop() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureCespedID);
 		shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
-		terrain.setPosition(glm::vec3(100, 0, 100)); //------------------------------------------------->Posiciona el mapa de alturas en el origen(a la mitad de la cantidad de rejillas)
-		//terrain.enableWireMode();//------------------------------------------------------------------->Para ver el modelo del terreno en modo rejilla
+
+		//---------------------->Posiciona el mapa de alturas en el origen(a la mitad de la cantidad de rejillas)
+		terrain.setPosition(glm::vec3(100, 0, 100)); 
 		terrain.render();
+
 		shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
 
