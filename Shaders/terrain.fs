@@ -57,14 +57,26 @@ uniform vec3 viewPos;
 uniform vec2 scaleUV;  
   
 uniform sampler2D backgroundTexture;
+uniform sampler2D rTexture;//------------>agregando componente red
+uniform sampler2D gTexture;//------------>agregando componente green
+uniform sampler2D bTexture;//------------>agregando componente blue
+uniform sampler2D blendMapTexture;//----->agregando el mapa de texturas
 
 vec3 calculateDirectionalLight(Light light, vec3 direction){
 	vec2 tiledCoords = our_uv;
 	if(tiledCoords.x != 0 && tiledCoords.y != 0)
 		tiledCoords = scaleUV * tiledCoords;
-	
-	vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords);
-	vec4 totalColor = backgroundTextureColor;
+
+	vec4 blendMapColor = texture(blendMapTexture,our_uv);//----------------> agregando los colores del mapa de mezclas
+	float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);//------->Sacando la inversa
+	vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords) * backTextureAmount;//---------------------->añadiendo textura de fondo
+	vec4 rTextureColor = texture(rTexture,tiledCoords) * blendMapColor.r;//-------------------->asignando textura red
+	vec4 gTextureColor = texture(gTexture,tiledCoords) * blendMapColor.g;//-------------------->asignando textura green
+	vec4 bTextureColor = texture(bTexture,tiledCoords) * blendMapColor.b;//-------------------->asignando textura blue
+	vec4 totalColor = backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor;//----->Asignando la totalidad de los colores que es la suma de todo
+
+	//vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords);
+	//vec4 totalColor = backgroundTextureColor;
 
 	// Ambient
     vec3 ambient  = light.ambient * vec3(totalColor);

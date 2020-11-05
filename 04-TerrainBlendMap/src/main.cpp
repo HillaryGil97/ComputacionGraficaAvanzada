@@ -88,10 +88,10 @@ Model modelPacManDescanso;
 Model modelPacManCorriendo;
 
 // Terrain model instance
-Terrain terrain(-1, -1, 200, 40, "../Textures/Texturas de Terreno/MiMapaDeAlturas.png");
+Terrain terrain(-1, -1, 200, 40, "../Textures/Texturas de Terreno/MiMapaDeAlturas.png"); //------------>Modificando el mapa de alturas.
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
-GLuint textureTerrainBackgroundID; //, textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
+GLuint textureTerrainBackgroundID, textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;//---------->variables para las texturas
 GLuint skyboxTextureID;
 
 GLenum types[6] = {
@@ -227,7 +227,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	shader.initialize("../Shaders/colorShader.vs", "../Shaders/colorShader.fs");
 	shaderSkybox.initialize("../Shaders/skyBox.vs", "../Shaders/skyBox.fs");
 	shaderMulLighting.initialize("../Shaders/iluminacion_textura_animation.vs", "../Shaders/multipleLights.fs");
-	shaderTerrain.initialize("../Shaders/terrain.vs", "../Shaders/terrain.fs");
+	shaderTerrain.initialize("../Shaders/terrain.vs", "../Shaders/terrain.fs");//---------------------------------->Cargando los sheders
 
 	// Inicializacion de los objetos.
 	skyboxSphere.init();
@@ -487,7 +487,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	textureLandingPad.freeImage(bitmap);
 
 	// Definiendo la textura a utilizar
-	Texture textureTerrainBackground("../Textures/grassy2.png");
+	Texture textureTerrainBackground("../Textures/Texturas de Terreno/terreno.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainBackground.loadImage();
 	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
@@ -518,8 +518,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureTerrainBackground.freeImage(bitmap);
 
-	/*// Definiendo la textura a utilizar
-	Texture textureTerrainR("../Textures/mud.png");
+	//--------------------------------------------------------------------------------------> Definiendo la textura a utilizar para R
+	Texture textureTerrainR("../Textures/Texturas de Terreno/tierra.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainR.loadImage();
 	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
@@ -548,10 +548,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	} else
 		std::cout << "Failed to load texture" << std::endl;
 	// Libera la memoria de la textura
-	textureTerrainR.freeImage(bitmap);*/
+	textureTerrainR.freeImage(bitmap);
 
-	/*// Definiendo la textura a utilizar
-	Texture textureTerrainG("../Textures/grassFlowers.png");
+	//-----------------------------------------------------------------------------------> Definiendo la textura a utilizar para G
+	Texture textureTerrainG("../Textures/Texturas de Terreno/nieve.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainG.loadImage();
 	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
@@ -580,10 +580,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	} else
 		std::cout << "Failed to load texture" << std::endl;
 	// Libera la memoria de la textura
-	textureTerrainG.freeImage(bitmap);*/
+	textureTerrainG.freeImage(bitmap);
 
-	/*// Definiendo la textura a utilizar
-	Texture textureTerrainB("../Textures/path.png");
+	//------------------------------------------------------------------------------>Definiendo la textura a utilizar para B
+	Texture textureTerrainB("../Textures/Texturas de Terreno/suelo.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainB.loadImage();
 	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
@@ -612,12 +612,12 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	} else
 		std::cout << "Failed to load texture" << std::endl;
 	// Libera la memoria de la textura
-	textureTerrainB.freeImage(bitmap);*/
+	textureTerrainB.freeImage(bitmap);
 
-	/*// Definiendo la textura a utilizar
-	Texture textureTerrainBlendMap("../Textures/blendMap.png");
+	//-----------------------------------------------------------------------------------> Definiendo la textura a utilizar para mapa de mezcla
+	Texture textureTerrainBlendMap("../Textures/Texturas de Terreno/MiBlendMap.png");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
-	bitmap = textureTerrainBlendMap.loadImage();
+	bitmap = textureTerrainBlendMap.loadImage(true);//-----------------------------------> se agrego el true para blipear la textura
 	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
 	data = textureTerrainBlendMap.convertToData(bitmap, imageWidth,
 			imageHeight);
@@ -644,7 +644,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	} else
 		std::cout << "Failed to load texture" << std::endl;
 	// Libera la memoria de la textura
-	textureTerrainBlendMap.freeImage(bitmap);*/
+	textureTerrainBlendMap.freeImage(bitmap);
 }
 
 void destroy() {
@@ -698,10 +698,10 @@ void destroy() {
 	glDeleteTextures(1, &textureHighwayID);
 	glDeleteTextures(1, &textureLandingPadID);
 	glDeleteTextures(1, &textureTerrainBackgroundID);
-	/*glDeleteTextures(1, &textureTerrainRID);
-	glDeleteTextures(1, &textureTerrainGID);
-	glDeleteTextures(1, &textureTerrainBID);
-	glDeleteTextures(1, &textureTerrainBlendMapID);*/
+	glDeleteTextures(1, &textureTerrainRID);//----------------->
+	glDeleteTextures(1, &textureTerrainGID);//----------------->Liberando memoria para las 
+	glDeleteTextures(1, &textureTerrainBID);//----------------->texturas
+	glDeleteTextures(1, &textureTerrainBlendMapID);//---------->
 
 	// Cube Maps Delete
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -979,17 +979,35 @@ void applicationLoop() {
 		shaderMulLighting.setInt("pointLightCount", 0);
 		shaderTerrain.setInt("pointLightCount", 0);
 
-		/*******************************************
+		/*******************************************---------------------------------->MODIFICANDO TERRENO.
 		 * Terrain Cesped
 		 *******************************************/
 		glm::mat4 modelCesped = glm::mat4(1.0);
 		modelCesped = glm::translate(modelCesped, glm::vec3(0.0, 0.0, 0.0));
 		modelCesped = glm::scale(modelCesped, glm::vec3(200.0, 0.001, 200.0));
+
 		// Se activa la textura del background
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainBackgroundID);
 		shaderTerrain.setInt("backgroundTexture", 0);
-		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(40, 40)));
+		//---------------------------------------------------------------------------->se activa la textura de la tierra
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainRID);
+		shaderTerrain.setInt("rTexture", 1);
+		//---------------------------------------------------------------------------->se activa la textura de flor
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainGID);
+		shaderTerrain.setInt("gTexture", 2);
+		//---------------------------------------------------------------------------->se activa la textura de la comino
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBID);
+		shaderTerrain.setInt("bTexture", 4);
+		//---------------------------------------------------------------------------->se activa la textura de mapa de mezcla
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
+		shaderTerrain.setInt("blendMapTexture", 5);
+
+		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(40, 40)));// se escalan las coordenadas de texturas n-veces
 		terrain.render();
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
