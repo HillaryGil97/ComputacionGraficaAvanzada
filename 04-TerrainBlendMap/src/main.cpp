@@ -82,8 +82,13 @@ Model modelDartLegoRightLeg;
 // Model animate instance
 // Mayow
 Model mayowModelAnimate;
+
+//-------------------------------------->Cargando ambas animaciones de Pacman
+Model modelPacManDescanso;
+Model modelPacManCorriendo;
+
 // Terrain model instance
-Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+Terrain terrain(-1, -1, 200, 40, "../Textures/Texturas de Terreno/MiMapaDeAlturas.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint textureTerrainBackgroundID; //, textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
@@ -116,9 +121,14 @@ glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
 glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 
+//----------------------------------------------------------------------->Matrices para Pacman
+glm::mat4 modelMatrixPacmanDescanso = glm::mat4(1.0f);
+glm::mat4 modelMatrixPacmanCorriendo = glm::mat4(1.0f);
+
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 int modelSelected = 0;
 bool enableCountSelected = true;
+int banderaPacman = 0;//------------------------------------------->Para indicar el estado de PacMan
 
 // Variables to animations keyframes
 bool saveFrame = false, availableSave = true;
@@ -278,6 +288,12 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//Mayow
 	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
 	mayowModelAnimate.setShader(&shaderMulLighting);
+
+	//---------------------------------------------------------------->Cargando modelos de Pacman
+	modelPacManDescanso.loadModel("../models/PacMan/Pac-Man_Descanso.fbx");
+	modelPacManDescanso.setShader(&shaderMulLighting);
+	modelPacManCorriendo.loadModel("../models/PacMan/Pac-Man_Corriendo.fbx");
+	modelPacManCorriendo.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -841,6 +857,31 @@ bool processInput(bool continueApplication) {
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(0.02, 0.0, 0.0));
 
+	//------------------------------------------------------------------------------------>Controles del modelo de PacMan
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_RELEASE
+		&& glfwGetKey(window, GLFW_KEY_UP) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_RELEASE)
+		banderaPacman = 0;
+	else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		modelMatrixPacmanCorriendo = glm::rotate(modelMatrixPacmanCorriendo, 0.02f, glm::vec3(0, 1, 0));
+		modelMatrixPacmanDescanso = glm::rotate(modelMatrixPacmanDescanso, 0.02f, glm::vec3(0, 1, 0));
+		banderaPacman = 1;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		modelMatrixPacmanCorriendo = glm::rotate(modelMatrixPacmanCorriendo, -0.02f, glm::vec3(0, 1, 0));
+		modelMatrixPacmanDescanso = glm::rotate(modelMatrixPacmanDescanso, -0.02f, glm::vec3(0, 1, 0));
+		banderaPacman = 1;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, -0.04));
+		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, -0.04));
+		banderaPacman = 1;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		modelMatrixPacmanCorriendo = glm::translate(modelMatrixPacmanCorriendo, glm::vec3(0.0, 0.0, 0.04));
+		modelMatrixPacmanDescanso = glm::translate(modelMatrixPacmanDescanso, glm::vec3(0.0, 0.0, 0.04));
+		banderaPacman = 1;
+	}
+
 	glfwPollEvents();
 	return continueApplication;
 }
@@ -1056,6 +1097,29 @@ void applicationLoop() {
 		modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021, 0.021, 0.021));
 		mayowModelAnimate.setAnimationIndex(0);
 		mayowModelAnimate.render(modelMatrixMayowBody);
+
+		//------------------------------------------------------>renderizando de Pacman según el estado de banderaPacman
+
+		if (banderaPacman == 1) {
+			modelMatrixPacmanCorriendo[3][1] = terrain.getHeightTerrain(modelMatrixPacmanCorriendo[3][0], modelMatrixPacmanCorriendo[3][2]);
+			glm::vec3 aux = glm::vec3(terrain.getNormalTerrain(modelMatrixPacmanCorriendo[3][0], modelMatrixPacmanCorriendo[3][2]));
+			modelMatrixPacmanCorriendo[1][0] = aux[0];
+			modelMatrixPacmanCorriendo[1][1] = aux[1];
+			modelMatrixPacmanCorriendo[1][2] = aux[2];
+			glm::mat4 modelMatrixPacmanCorriendoBody = glm::mat4(modelMatrixPacmanCorriendo);
+			modelMatrixPacmanCorriendoBody = glm::scale(modelMatrixPacmanCorriendoBody, glm::vec3(0.005, 0.005, 0.005));
+			modelPacManCorriendo.render(modelMatrixPacmanCorriendoBody);
+		}
+		else {
+			modelMatrixPacmanDescanso[3][1] = terrain.getHeightTerrain(modelMatrixPacmanDescanso[3][0], modelMatrixPacmanDescanso[3][2]);
+			glm::vec3 aux = glm::vec3(terrain.getNormalTerrain(modelMatrixPacmanDescanso[3][0], modelMatrixPacmanDescanso[3][2]));
+			modelMatrixPacmanDescanso[1][0] = aux[0];
+			modelMatrixPacmanDescanso[1][1] = aux[1];
+			modelMatrixPacmanDescanso[1][2] = aux[2];
+			glm::mat4 modelMatrixPacmanDescansoBody = glm::mat4(modelMatrixPacmanDescanso);
+			modelMatrixPacmanDescansoBody = glm::scale(modelMatrixPacmanDescansoBody, glm::vec3(0.005, 0.005, 0.005));
+			modelPacManDescanso.render(modelMatrixPacmanDescansoBody);
+		}
 
 		/*******************************************
 		 * Skybox
