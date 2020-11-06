@@ -86,6 +86,7 @@ Model mayowModelAnimate;
 //-------------------------------------->Cargando ambas animaciones de Pacman
 Model modelPacManDescanso;
 Model modelPacManCorriendo;
+Model modelBaile;
 
 // Terrain model instance
 Terrain terrain(-1, -1, 200, 40, "../Textures/Texturas de Terreno/MiMapaDeAlturas.png"); //------------>Modificando el mapa de alturas.
@@ -124,6 +125,7 @@ glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 //----------------------------------------------------------------------->Matrices para Pacman
 glm::mat4 modelMatrixPacmanDescanso = glm::mat4(1.0f);
 glm::mat4 modelMatrixPacmanCorriendo = glm::mat4(1.0f);
+glm::mat4 modelMatrixBaile = glm::mat4(1.0f);
 
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 int modelSelected = 0;
@@ -294,6 +296,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelPacManDescanso.setShader(&shaderMulLighting);
 	modelPacManCorriendo.loadModel("../models/PacMan/Pac-Man_Corriendo.fbx");
 	modelPacManCorriendo.setShader(&shaderMulLighting);
+
+	modelBaile.loadModel("../models/Mis modelos/mixamo/baile.fbx");
+	modelBaile.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -518,7 +523,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureTerrainBackground.freeImage(bitmap);
 
-	//--------------------------------------------------------------------------------------> Definiendo la textura a utilizar para R
+	//---------------------------> Definiendo la textura a utilizar para R
 	Texture textureTerrainR("../Textures/Texturas de Terreno/tierra.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainR.loadImage();
@@ -550,7 +555,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureTerrainR.freeImage(bitmap);
 
-	//-----------------------------------------------------------------------------------> Definiendo la textura a utilizar para G
+	//--------------------------> Definiendo la textura a utilizar para G
 	Texture textureTerrainG("../Textures/Texturas de Terreno/nieve.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainG.loadImage();
@@ -582,7 +587,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureTerrainG.freeImage(bitmap);
 
-	//------------------------------------------------------------------------------>Definiendo la textura a utilizar para B
+	//--------------------------->Definiendo la textura a utilizar para B
 	Texture textureTerrainB("../Textures/Texturas de Terreno/suelo.jpg");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	bitmap = textureTerrainB.loadImage();
@@ -1115,6 +1120,12 @@ void applicationLoop() {
 		modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021, 0.021, 0.021));
 		mayowModelAnimate.setAnimationIndex(0);
 		mayowModelAnimate.render(modelMatrixMayowBody);
+
+		modelMatrixBaile[3][1] = terrain.getHeightTerrain(modelMatrixBaile[3][0], modelMatrixBaile[3][2]);//------------------->SE agrego para acoplar al modelo con el terreno.
+		glm::mat4 modelMatrixBaileBody = glm::mat4(modelMatrixBaile);
+		modelMatrixBaileBody = glm::scale(modelMatrixBaileBody, glm::vec3(0.015, 0.015, 0.015));
+		modelMatrixBaileBody = glm::translate(modelMatrixBaileBody, glm::vec3(0, 0, 1));
+		modelBaile.render(modelMatrixBaileBody);
 
 		//------------------------------------------------------>renderizando de Pacman según el estado de banderaPacman
 
