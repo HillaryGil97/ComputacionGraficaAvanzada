@@ -83,6 +83,9 @@ Model modelDartLegoRightLeg;
 Model modelLamp1;
 Model modelLamp2;//---------------------------------------->Agregando para el modelo2 de lampara
 Model modelLampPos2;//------------------------------------>Agregando el poste de la lampara2
+
+Model modelLamp3;//-----------------> Agregando el tercer modelo de farol
+
 // Model animate instance
 // Mayow
 Model mayowModelAnimate;
@@ -155,9 +158,14 @@ float dorRotCount = 0.0;
 std::vector<glm::vec3> lamp1Position = { glm::vec3(-7.03, 0, -19.14), glm::vec3(
 		24.41, 0, -34.57), glm::vec3(-10.15, 0, -54.10), glm::vec3(13.4765625,0,-52.34375) }; //------------------->agregando las coordenadas de las lamparas
 std::vector<float> lamp1Orientation = { -17.0, -82.67, 23.70, 142.51};//------------------------------------------->agregando la orientación de las lamparas
-std::vector<glm::vec3> lamp2Position = { glm::vec3(-36.52, 0, -23.24),
-		glm::vec3(-52.73, 0, -3.90) };
-std::vector<float> lamp2Orientation = {21.37 + 90, -65.0 + 90};
+std::vector<glm::vec3> lamp2Position = { glm::vec3(-36.52, 0, -23.24), glm::vec3(-52.73, 0, -3.90), 
+	glm::vec3(-50.5859, 0, 14.4531), glm::vec3(-47.4609, 0, 29.4921), glm::vec3(-36.1328, 0, 34.5703)};//------------>Lamparas agregadas
+std::vector<float> lamp2Orientation = { 21.37 + 90, -65.0 + 90, 
+										23.50, 237.26, 90};//----------------------------------------------->Orientación de las lamparas
+
+//---------------------------------------------------------> Añadiendo la posición y la orientación de lamp3
+std::vector<glm::vec3> lamp3Position = { glm::vec3(-38.8671,0,-38.2812)};
+std::vector<float> lamp3Orientation = { 16.7 };
 
 double deltaTime;
 double currTime, lastTime;
@@ -296,6 +304,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelLamp2.setShader(&shaderMulLighting);
 	modelLampPos2.loadModel("../models/Street_Light/LampPost.obj");
 	modelLampPos2.setShader(&shaderMulLighting);
+
+	//----------------------------------------------------------------------------------->Modelo de Lampara3
+	modelLamp3.loadModel("../models/Mis modelos/farola/AEL_245_Contempo_obj.obj");
+	modelLamp3.setShader(&shaderMulLighting);
 
 
 	//Mayow
@@ -696,6 +708,7 @@ void destroy() {
 	modelLamp1.destroy();
 	modelLamp2.destroy();//------------------------------------>liberando memoria
 	modelLampPos2.destroy();//--------------------------------->liberarando memoria
+	modelLamp3.destroy();//------------------------------------>liberando memoria
 
 	// Custom objects animate
 	mayowModelAnimate.destroy();
@@ -1005,7 +1018,7 @@ void applicationLoop() {
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09);
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.02);
 		}
-		for (int i = 0; i < lamp2Position.size(); i++) {
+		for (int i = 0; i < lamp2Position.size(); i++) { //------------------------------Luz del segundo modelo de lampara.
 			glm::mat4 matrixAdjustLamp = glm::mat4(1.0f);
 			matrixAdjustLamp = glm::translate(matrixAdjustLamp, lamp2Position[i]);
 			matrixAdjustLamp = glm::rotate(matrixAdjustLamp, glm::radians(lamp2Orientation[i]), glm::vec3(0, 1, 0));
@@ -1083,7 +1096,7 @@ void applicationLoop() {
 		modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, 0.249548));
 		modelHeliHeli.render(modelMatrixHeliHeli);
 
-		// Lambo car
+		//---------------------------------------------------------------------------->Lambo car
 		glDisable(GL_CULL_FACE);
 		glm::mat4 modelMatrixLamboChasis = glm::mat4(modelMatrixLambo);
 		modelMatrixLamboChasis[3][1] = terrain.getHeightTerrain(modelMatrixLamboChasis[3][0], modelMatrixLamboChasis[3][2]);
@@ -1123,6 +1136,15 @@ void applicationLoop() {
 			modelLampPos2.setScale(glm::vec3(1.0, 1.0, 1.0));
 			modelLampPos2.setOrientation(glm::vec3(0, lamp2Orientation[i], 0));
 			modelLampPos2.render();
+		}
+
+		//--------------------------------------------------------->Render de la lampara3
+		for (int i = 0; i < lamp3Position.size(); i++) {
+			lamp3Position[i].y = terrain.getHeightTerrain(lamp3Position[i].x, lamp3Position[i].z);
+			modelLamp3.setPosition(lamp3Position[i]);
+			modelLamp3.setScale(glm::vec3(0.002, 0.002, 0.002));
+			modelLamp3.setOrientation(glm::vec3(0, lamp3Orientation[i], 0));
+			modelLamp3.render();
 		}
 
 		// Dart lego
@@ -1266,7 +1288,7 @@ void applicationLoop() {
 		 * State machines
 		 *******************************************/
 
-		// State machine for the lambo car
+		//---------------------------------------------------->State machine for the lambo car
 		switch(stateDoor){
 		case 0:
 			dorRotCount += 0.5;
