@@ -2,7 +2,9 @@ Dimensiones de mapa de texturas: 1024 x 1024 px
 Dimensiones de terreno: 200 x 200 unidades en OpenGL
 Pivote del terreno: 100, 100 en el plano XZ
 
-Posición lampara1: 581,244 -> 13.4765625,-52.34375, 180-37.69°=142.51° 
-Posición lampara2: 
-Posición lampara3:
+Posición lampara1: 253,0,586 -> -50.5859,0,14.4531	115.56°
+Posición lampara2: 269,0,663 -> -47.4609,0,29.4921	270-32.74°
+Posición lampara3: 327,0,689 -> -36.1328,0,34.5703	90°
+
+Posición lamparaModeloNuevo: 313,0,316 -> -38.8671,0,-38.2812	16.7°
  
