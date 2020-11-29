@@ -54,7 +54,9 @@ Shader shaderMulLighting;
 //Shader para el terreno
 Shader shaderTerrain;
 
-std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
+//std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());//-------------------->Creando apuntador para camara en primera persona
+std::shared_ptr<Camera> camera(new ThirdPersonCamera());//--------------------------------->Declarando la camara en tercer persona
+float distanceFromTarget = 5.0;//---------------------------------------------------------->Distancia de la camara al modelo
 
 Sphere skyboxSphere(20, 20);
 
@@ -121,6 +123,8 @@ glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
 glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 
+int indexAnimationMayow = 1;//----------------------------------------------------->Varaiables para animaciones de Mayow
+
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 int modelSelected = 2;
 bool enableCountSelected = true;
@@ -169,7 +173,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action,
 		int mode);
 void mouseCallback(GLFWwindow *window, double xpos, double ypos);
 void mouseButtonCallback(GLFWwindow *window, int button, int state, int mod);
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);//--------------------->Para acercar o alejar la camara del pivote
 void init(int width, int height, std::string strTitle, bool bFullScreen);
 void destroy();
 bool processInput(bool continueApplication = true);
@@ -211,6 +215,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	glfwSetScrollCallback(window, scrollCallback);//----------------------->Declarando los eventos del scroll
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// Init glew
@@ -301,7 +306,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
 	mayowModelAnimate.setShader(&shaderMulLighting);
 
-	camera->setPosition(glm::vec3(0.0, 0.0, 10.0));
+	camera->setPosition(glm::vec3(0.0, 0.0, 10.0));//---------------------------->Posición de la camara en primera persona
+	camera->setDistanceFromTarget(distanceFromTarget);//------------------------->Para que calcule automaticamente la distancia de la camara
+	camera->setSensitivity(1.0f);
 
 	// Definimos el tamanio de la imagen
 	int imageWidth, imageHeight;
@@ -741,6 +748,11 @@ void mouseCallback(GLFWwindow *window, double xpos, double ypos) {
 	lastMousePosY = ypos;
 }
 
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {//------------------------------------->creando la función de la camara en tercera persona
+	distanceFromTarget -= yoffset;
+	camera->setDistanceFromTarget(distanceFromTarget);
+}
+
 void mouseButtonCallback(GLFWwindow *window, int button, int state, int mod) {
 	if (state == GLFW_PRESS) {
 		switch (button) {
@@ -762,17 +774,11 @@ bool processInput(bool continueApplication) {
 	if (exitApp || glfwWindowShouldClose(window) != 0) {
 		return false;
 	}
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera->moveFrontCamera(true, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera->moveFrontCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera->moveRightCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera->moveRightCamera(true, deltaTime);
+	//------------------------------------->Cambiando los métodos de los movimientos de la camara
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetX, offsetY, deltaTime);
+		camera->mouseMoveCamera(offsetX, 0.0, deltaTime);
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		camera->mouseMoveCamera(0.0, offsetY, deltaTime);
 	offsetX = 0;
 	offsetY = 0;
 
@@ -869,12 +875,16 @@ bool processInput(bool continueApplication) {
 	// Mayow animate model movements
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
 		modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(1.0f), glm::vec3(0, 1, 0));
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->
 	}else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
 		modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(-1.0f), glm::vec3(0, 1, 0));
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0, 0, 0.02));
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->
 	}else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0, 0, -0.02));
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->
 	}
 
 	glfwPollEvents();
@@ -922,6 +932,32 @@ void applicationLoop() {
 
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
 				(float) screenWidth / (float) screenHeight, 0.01f, 100.0f);
+		
+		//--------------------------------------------------------------------------------------------->Agregando variables
+		glm::vec3 axis;
+		glm::vec3 target;
+		float angleTarget;
+
+		if (modelSelected == 1) {
+			axis = glm::axis(glm::quat_cast(modelMatrixDart));
+			angleTarget = glm::angle(glm::quat_cast(modelMatrixDart));
+			target = modelMatrixDart[3];
+		}
+		else if (modelSelected == 2) {
+			axis = glm::axis(glm::quat_cast(modelMatrixMayow));
+			angleTarget = glm::angle(glm::quat_cast(modelMatrixMayow));
+			target = modelMatrixMayow[3];
+		}
+
+		if (std::isnan(angleTarget))//------------------------->verificando que no este indeterminado
+			angleTarget = 0;
+		if (axis.y < 0)//------------------------->verificando si el angulo es negativo
+			angleTarget = -angleTarget;
+		if (modelSelected == 1)//------------------------->verificando que en el DartVader este detrás la camara
+			angleTarget -= glm::radians(90.0f);
+		camera->setCameraTarget(target);
+		camera->setAngleTarget(angleTarget);
+		camera->updateCamera();
 		glm::mat4 view = camera->getViewMatrix();
 
 		// Settea la matriz de vista y projection al shader con solo color
@@ -1184,6 +1220,7 @@ void applicationLoop() {
 		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
 		glm::mat4 modelMatrixMayowBody = glm::mat4(modelMatrixMayow);
 		modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021, 0.021, 0.021));
+		mayowModelAnimate.setAnimationIndex(indexAnimationMayow);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 
 		/*******************************************
@@ -1261,7 +1298,7 @@ void applicationLoop() {
 
 		// Constantes de animaciones
 		rotHelHelY += 0.5;
-
+		indexAnimationMayow = 1;
 		/*******************************************
 		 * State machines
 		 *******************************************/
