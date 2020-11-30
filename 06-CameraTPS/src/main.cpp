@@ -123,14 +123,14 @@ glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
 glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 
-int indexAnimationMayow = 1;//----------------------------------------------------->Varaiables para animaciones de Mayow
+int indexAnimationMayow = 1;//----------------------------------------------------->Varaiables para animaciones de Mayow inicializado en descanso
 
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 int modelSelected = 2;
 bool enableCountSelected = true;
 
 // Variables to animations keyframes
-bool saveFrame = false, availableSave = true, modelChange = false;
+bool saveFrame = false, availableSave = true, modelChange1 = false, modelChange2 = false, modelChange3 = false, modelChange4 = false;//------------------se agrega modelChange
 std::ofstream myfile;
 std::string fileName = "";
 bool record = false;
@@ -872,20 +872,53 @@ return false;
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(0.02, 0.0, 0.0));
 
-	
+	//---------------------------------------------------------------------------------------->Reseteando la animación
+	if (!modelChange1 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		TimeManager::Instance().resetStartTime();
+		modelChange1 = true;
+	}
+	else if (modelChange1 &&glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_RELEASE) {
+		TimeManager::Instance().resetStartTime();
+		modelChange1 = false;
+	}
+	if (!modelChange2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		TimeManager::Instance().resetStartTime();
+		modelChange2 = true;
+	}
+	else if (modelChange2 &&glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_RELEASE) {
+		TimeManager::Instance().resetStartTime();
+		modelChange2 = false;
+	}
+	if (!modelChange3 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		TimeManager::Instance().resetStartTime();
+		modelChange3 = true;
+	}
+	else if (modelChange3 &&glfwGetKey(window, GLFW_KEY_UP) == GLFW_RELEASE) {
+		TimeManager::Instance().resetStartTime();
+		modelChange3 = false;
+	}
+	if (!modelChange4 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		TimeManager::Instance().resetStartTime();
+		modelChange4 = true;
+	}
+	else if (modelChange4 &&glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_RELEASE) {
+		TimeManager::Instance().resetStartTime();
+		modelChange4 = false;
+	}
+
 	// Mayow animate model movements
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
 		modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(1.0f), glm::vec3(0, 1, 0));
-		indexAnimationMayow = 0;//------------------------------------------------------------------------->
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->Cambiando de animación a caminado
 	}else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
 		modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(-1.0f), glm::vec3(0, 1, 0));
-		indexAnimationMayow = 0;//------------------------------------------------------------------------->
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->Cambiando de animación a caminado
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0, 0, 0.02));
-		indexAnimationMayow = 0;//------------------------------------------------------------------------->
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->Cambiando de animación a caminado
 	}else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0, 0, -0.02));
-		indexAnimationMayow = 0;//------------------------------------------------------------------------->
+		indexAnimationMayow = 0;//------------------------------------------------------------------------->Cambiando de animación a caminado
 	}
 
 	glfwPollEvents();
@@ -1221,7 +1254,7 @@ void applicationLoop() {
 		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
 		glm::mat4 modelMatrixMayowBody = glm::mat4(modelMatrixMayow);
 		modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021, 0.021, 0.021));
-		mayowModelAnimate.setAnimationIndex(indexAnimationMayow);
+		mayowModelAnimate.setAnimationIndex(indexAnimationMayow);//------------------------------------------------->Para reiniciar la animación seleccionada
 		mayowModelAnimate.render(modelMatrixMayowBody);
 
 		/*******************************************
@@ -1299,7 +1332,7 @@ void applicationLoop() {
 
 		// Constantes de animaciones
 		rotHelHelY += 0.5;
-		indexAnimationMayow = 1;
+		indexAnimationMayow = 1;//------------------------------------->Para volver a resetear la animación de mayow
 		/*******************************************
 		 * State machines
 		 *******************************************/

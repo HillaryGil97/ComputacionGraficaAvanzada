@@ -35,6 +35,7 @@
 
 #include "Mesh.h"
 #include "Bones.h"
+#include "TimeManager.h"//---------------------->Añadiendo libreria del time manager
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

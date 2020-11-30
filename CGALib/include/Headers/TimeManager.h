@@ -42,6 +42,7 @@ public:
 
 	double GetRunningTime();
 	double GetTime();
+	void resetStartTime();//------------>Añadiendo firma del método
 
 	void Sleep(int milliseconds);
 
