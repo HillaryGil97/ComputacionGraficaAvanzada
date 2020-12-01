@@ -164,7 +164,7 @@ std::vector<glm::vec3> lamp2Position = { glm::vec3(-36.52, 0, -23.24), glm::vec3
 std::vector<float> lamp2Orientation = { 21.37 + 90, -65.0 + 90, 
 										23.50, 237.26, 90};//----------------------------------------------->Orientación de las lamparas
 
-//---------------------------------------------------------> Añadiendo la posición y la orientación de lamp3
+//-----------------------> Añadiendo la posición y la orientación de lamp3
 std::vector<glm::vec3> lamp3Position = { glm::vec3(-38.8671,0,-38.2812)};
 std::vector<float> lamp3Orientation = { 16.7 };
 
@@ -306,7 +306,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelLampPos2.loadModel("../models/Street_Light/LampPost.obj");
 	modelLampPos2.setShader(&shaderMulLighting);
 
-	//----------------------------------------------------------------------------------->Modelo de Lampara3
+	//-------------------------------------------->Modelo de Lampara3
 	modelLamp3.loadModel("../models/Mis modelos/farola/farola.obj");
 	modelLamp3.setShader(&shaderMulLighting);
 
@@ -881,7 +881,7 @@ bool processInput(bool continueApplication) {
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(0.02, 0.0, 0.0));
 
-	//------------------------------------------------------------------------------------>Controles del modelo del Lamborginni
+	//------------------------------------------->Controles del modelo del Lamborginni
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		modelMatrixLambo = glm::rotate(modelMatrixLambo, 0.03f, glm::vec3(0, 1, 0));
 	}
@@ -982,10 +982,10 @@ void applicationLoop() {
 		shaderTerrain.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderTerrain.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
 
-		//------------------------------------------------------------------------------------------------------------------>Propiedades, Luz SpotLight
+		//---------------------------------------------------------------------->Propiedades, Luz SpotLight del faro derecho
+		shaderMulLighting.setInt("spotLightCount", 2);
+		shaderTerrain.setInt("spotLightCount", 2);
 		glm::vec3 spotLightPosition = glm::vec3(modelMatrixLambo * glm::vec4(0.779388, 0.645692, 2.28855, 1.0));
-		shaderMulLighting.setInt("spotLightCount", 1);
-		shaderTerrain.setInt("spotLightCount", 1);
 		shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
 		shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.35, 0.2)));
 		shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
@@ -1008,7 +1008,7 @@ void applicationLoop() {
 		shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
 		shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(12.5f)));
 
-		/*/----------------------------------------------------------------------------------->spotlight del faro derecho
+		//---------------------------------------------------------------------->Propiedades, Luz SpotLight del faro izquierdo
 		glm::vec3 spotLightPositionLambo = glm::vec3(modelMatrixLambo * glm::vec4(-0.779388, 0.645692, 2.28855, 1.0));
 		shaderMulLighting.setVectorFloat3("spotLights[1].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
 		shaderMulLighting.setVectorFloat3("spotLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.35, 0.2)));
@@ -1030,7 +1030,7 @@ void applicationLoop() {
 		shaderTerrain.setFloat("spotLights[1].linear", 0.074);
 		shaderTerrain.setFloat("spotLights[1].quadratic", 0.03);
 		shaderTerrain.setFloat("spotLights[1].cutOff", cos(glm::radians(12.5f)));
-		shaderTerrain.setFloat("spotLights[1].outerCutOff", cos(glm::radians(12.5f)));*/
+		shaderTerrain.setFloat("spotLights[1].outerCutOff", cos(glm::radians(12.5f)));
 
 		/*******************************************
 		 * Propiedades PointLights
@@ -1083,7 +1083,7 @@ void applicationLoop() {
 			shaderTerrain.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].quadratic", 0.02);
 		}
 
-		for (int i = 0; i < lamp3Position.size(); i++) { //------------------------------Luz del segundo modelo de lampara.
+		for (int i = 0; i < lamp3Position.size(); i++) { //------------------------------Luz del tercer modelo de lampara.
 			glm::mat4 matrixAdjustLamp = glm::mat4(1.0f);
 			matrixAdjustLamp = glm::translate(matrixAdjustLamp, lamp3Position[i]);
 			matrixAdjustLamp = glm::rotate(matrixAdjustLamp, glm::radians(lamp3Orientation[i]), glm::vec3(0, 1, 0));
